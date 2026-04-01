@@ -69,7 +69,7 @@ class KatalogProduk extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Katalog Produk'),
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color.fromARGB(255, 193, 66, 8),
         foregroundColor: Colors.white,
       ),
       body: Padding(
@@ -131,7 +131,7 @@ class KatalogProduk extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: Colors.blue,
+                            color: Color.fromARGB(255, 190, 74, 7),
                           ),
                         ),
                       ],
