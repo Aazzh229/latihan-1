@@ -4,7 +4,7 @@ class Product {
   final String id;
   final String name;
   final String description;
-  final double price;
+  final String price;
   final String imageUrl;
 
   Product({
@@ -16,123 +16,202 @@ class Product {
   });
 }
 
-class KatalogProduk extends StatelessWidget {
-  KatalogProduk({super.key});
+class KatalogProduk extends StatefulWidget {
+  final Function(Product) onAddToCart;
 
-  final List<Product> products = [
+  const KatalogProduk({
+    super.key,
+    required this.onAddToCart,
+  });
+
+  @override
+  State<KatalogProduk> createState() => _KatalogProdukState();
+}
+
+class _KatalogProdukState extends State<KatalogProduk> {
+  List<Product> products = [
     Product(
       id: '1',
-      name: 'Produk A',
-      description: 'Deskripsi singkat untuk Produk A',
-      price: 150000,
+      name: 'Samsung Galaxy Book',
+      description: 'Laptop ringan & cepat',
+      price: '15.000.000',
       imageUrl: 'https://picsum.photos/id/1/200/200',
     ),
     Product(
       id: '2',
-      name: 'Produk B',
-      description: 'Deskripsi singkat untuk Produk B',
-      price: 250000,
+      name: 'ASUS VivoBook',
+      description: 'Cocok untuk mahasiswa',
+      price: '25.000.000',
       imageUrl: 'https://picsum.photos/id/2/200/200',
     ),
     Product(
       id: '3',
-      name: 'Produk C',
-      description: 'Deskripsi singkat untuk Produk C',
-      price: 350000,
+      name: 'MacBook Air',
+      description: 'Tipis dan powerful',
+      price: '35.000.000',
       imageUrl: 'https://picsum.photos/id/3/200/200',
     ),
     Product(
       id: '4',
-      name: 'Produk D',
-      description: 'Deskripsi singkat untuk Produk D',
-      price: 450000,
+      name: 'Dell XPS',
+      description: 'Premium performance',
+      price: '45.000.000',
       imageUrl: 'https://picsum.photos/id/4/200/200',
     ),
-    Product(
-      id: '5',
-      name: 'Produk E',
-      description: 'Deskripsi singkat untuk Produk E',
-      price: 550000,
-      imageUrl: 'https://picsum.photos/id/5/200/200',
-    ),
-    Product(
-      id: '6',
-      name: 'Produk F',
-      description: 'Deskripsi singkat untuk Produk F',
-      price: 650000,
-      imageUrl: 'https://picsum.photos/id/6/200/200',
-    ),
   ];
+
+  void _showAddProductDialog() {
+    final nameController = TextEditingController();
+    final descController = TextEditingController();
+    final priceController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Tambah Produk"),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(labelText: "Nama Produk"),
+                ),
+                TextField(
+                  controller: descController,
+                  decoration: const InputDecoration(labelText: "Deskripsi"),
+                ),
+                TextField(
+                  controller: priceController,
+                  decoration: const InputDecoration(labelText: "Harga"),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Batal"),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+              ),
+              onPressed: () {
+                setState(() {
+                  products.add(
+                    Product(
+                      id: DateTime.now().toString(),
+                      name: nameController.text,
+                      description: descController.text,
+                      price: priceController.text,
+                      imageUrl: 'https://picsum.photos/200',
+                    ),
+                  );
+                });
+
+                Navigator.pop(context);
+              },
+              child: const Text("Tambah"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Katalog Produk'),
-        backgroundColor: const Color.fromARGB(255, 193, 66, 8),
-        foregroundColor: Colors.white,
-      ),
       body: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10),
         child: GridView.builder(
+          itemCount: products.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 0.75,
+            childAspectRatio: 0.9,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
           ),
-          itemCount: products.length,
           itemBuilder: (context, index) {
             final product = products[index];
+
             return Card(
-              elevation: 4,
+              elevation: 3,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(12),
+                    ),
                     child: Image.network(
                       product.imageUrl,
-                      fit: BoxFit.cover,
-                      height: 120,
+                      height: 100,
                       width: double.infinity,
+                      fit: BoxFit.cover,
                     ),
                   ),
+
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           product.name,
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
+
                         const SizedBox(height: 4),
+
                         Text(
                           product.description,
                           style: const TextStyle(
-                            fontSize: 12,
+                            fontSize: 11,
                             color: Colors.grey,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Rp ${product.price.toStringAsFixed(0)}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 190, 74, 7),
-                          ),
+
+                        const SizedBox(height: 6),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Rp ${product.price}',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.orange,
+                              ),
+                            ),
+
+                            // 🔥 SEKARANG TERHUBUNG KE MAIN
+                            IconButton(
+                              icon: const Icon(Icons.add_shopping_cart, color: Colors.orange),
+                              onPressed: () {
+                                widget.onAddToCart(product);
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("${product.name} ditambahkan"),
+                                    duration: const Duration(seconds: 1),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -142,6 +221,12 @@ class KatalogProduk extends StatelessWidget {
             );
           },
         ),
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.orange,
+        onPressed: _showAddProductDialog,
+        child: const Icon(Icons.add),
       ),
     );
   }
